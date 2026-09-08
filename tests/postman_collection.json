@@ -1,0 +1,82 @@
+{
+  "info": {
+    "name": "AI 摘要服务 API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "健康检查",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "摘要接口 - 正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"text\": \"DeepSeek API 联调测试成功，现在将真实 API 集成到 Flask 服务中。\", \"max_length\": 20}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/summarize",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["summarize"]
+        }
+      }
+    },
+    {
+      "name": "摘要接口 - 缺少 text 字段（负向测试）",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"max_length\": 20}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/summarize",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["summarize"]
+        }
+      }
+    },
+    {
+      "name": "摘要接口 - 空文本（负向测试）",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"text\": \"\", \"max_length\": 20}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/summarize",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["summarize"]
+        }
+      }
+    }
+  ]
+}

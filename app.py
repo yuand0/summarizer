@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from response import success, error
 from summarize import generate_summary
+import os
 
 def create_app():
     app = Flask(__name__)
@@ -22,6 +23,7 @@ def create_app():
         text = data['text']
         max_length = data.get('max_length', 100)
         
+        # 从环境变量读取 API Key
         result = generate_summary(text, max_length)
         if 'error' in result:
             return jsonify(error(400, result['error'])), 400
