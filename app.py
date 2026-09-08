@@ -23,7 +23,6 @@ def create_app():
         text = data['text']
         max_length = data.get('max_length', 100)
         
-        # 从环境变量读取 API Key
         result = generate_summary(text, max_length)
         if 'error' in result:
             return jsonify(error(400, result['error'])), 400
@@ -32,6 +31,8 @@ def create_app():
 
     return app
 
+# 为 Gunicorn 创建全局 app 实例
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
