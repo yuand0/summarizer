@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from response import success, error
 from summarize import generate_summary
+from cache import get_cache_stats
 import os
 
 def create_app():
@@ -29,9 +30,12 @@ def create_app():
         
         return jsonify(success(result))
 
+    @app.route('/cache/stats')
+    def cache_stats():
+        return jsonify(success(get_cache_stats()))
+
     return app
 
-# 为 Gunicorn 创建全局 app 实例
 app = create_app()
 
 if __name__ == '__main__':
