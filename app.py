@@ -3,14 +3,32 @@ from response import success, error
 from summarize import generate_summary
 from cache import get_cache_stats
 from logging_config import setup_logging
+from metrics import setup_metrics, REQUEST_COUNT, REQUEST_LATENCY
 import logging
-import uuid
+import time
 
 def create_app():
     app = Flask(__name__)
     setup_logging(app)
+    setup_metrics(app)
 
     logger = logging.getLogger(__name__)
+
+    @app.before_request
+    def start_timer():
+        g.start_time = time.time()
+
+    @app.after_request
+    def record_metrics(response):
+        if request.path != '/metrics':
+            duration = time.time() - g.get('start_time', time.time())
+            REQUEST_COUNT.labels(
+                method=request.method,
+                endpoint=request.path,
+                status=response.status_code
+            ).inc()
+            REQUEST_LATENCY.labels(endpoint=request.path).observe(duration)
+        return response
 
     @app.route('/')
     def index():
@@ -22,12 +40,8 @@ def create_app():
 
     @app.route('/summarize', methods=['POST'])
     def summarize():
-        request_id = g.get('request_id', 'unknown')
-        logger.info(f"收到摘要请求, request_id={request_id}")
-        
         data = request.get_json()
         if not data or 'text' not in data:
-            logger.warning(f"缺少 text 字段, request_id={request_id}")
             return jsonify(error(400, "缺少 text 字段")), 400
         
         text = data['text']
@@ -35,10 +49,8 @@ def create_app():
         
         result = generate_summary(text, max_length)
         if 'error' in result:
-            logger.error(f"摘要失败: {result['error']}, request_id={request_id}")
             return jsonify(error(400, result['error'])), 400
         
-        logger.info(f"摘要成功, request_id={request_id}")
         return jsonify(success(result))
 
     @app.route('/cache/stats')
