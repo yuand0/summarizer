@@ -20,6 +20,11 @@ AI 文本摘要服务（summarizer）
 - [x] `/metrics` Prometheus 指标
 - [x] 公网部署（Railway）
 
+## 未实现功能（已知缺口）
+- [ ] JWT 登录认证（W4-W5 计划）
+- 原因：优先保障 C++ 组件库主线进度
+- 后续可按需补充
+
 ## 公网地址
 https://summarizer-production-5c52.up.railway.app
 
